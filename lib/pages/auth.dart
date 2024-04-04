@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../components/common/back_button.dart';
 import '../components/common/text.dart';
 import '../utilities/static_data.dart';
 
@@ -43,60 +44,39 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                 height: height * 0.4,
                 fit: BoxFit.fitHeight,
               ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  SizedBox(
-                    width: width * .9,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+              SizedBox(
+                width: width * .9,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CustomText(
-                          text: "Hello,",
-                          color: fontColor(.6),
-                          weight: FontWeight.w600,
-                          size: sizeData.header,
+                          text: "Welcome To ",
+                          color: fontColor(.8),
+                          weight: FontWeight.w700,
+                          size: sizeData.superHeader,
                         ),
-                        SizedBox(
-                          height: height * 0.01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomText(
-                              text: "Welcome To ",
-                              color: fontColor(.8),
-                              weight: FontWeight.w700,
-                              size: sizeData.superHeader,
-                            ),
-                            ShaderMask(
-                              shaderCallback: (Rect rect) =>
-                                  const LinearGradient(colors: [
-                                Color.fromARGB(255, 184, 12, 0),
-                                Colors.redAccent
+                        ShaderMask(
+                          shaderCallback: (Rect rect) => const LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 60, 0, 200),
+                                Color.fromARGB(255, 99, 82, 255)
                               ]).createShader(rect),
-                              child: CustomText(
-                                text: "RedHat!",
-                                color: Colors.white,
-                                weight: FontWeight.w800,
-                                size: sizeData.superHeader,
-                              ),
-                            ),
-                          ],
+                          child: CustomText(
+                            text: "StudentProject",
+                            color: Colors.white,
+                            weight: FontWeight.w800,
+                            size: sizeData.superHeader,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  Positioned(
-                    top: -12,
-                    right: -width * 0.05,
-                    child: Image.asset(
-                      "assets/images/redhat.png",
-                      height: height * 0.1,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               SizedBox(
                 height: height * 0.04,
@@ -176,7 +156,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                     height: height * 0.02,
                   ),
                   CustomText(
-                    text: "By Bharathraj ❤️",
+                    text: "By StudentProject",
                     color: fontColor(.8),
                     weight: FontWeight.w800,
                   ),

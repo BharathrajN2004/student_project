@@ -40,7 +40,7 @@ class Footer extends ConsumerWidget {
           height: height * 0.02,
         ),
         CustomText(
-          text: "By Bharathraj ❤️",
+          text: "By StudentProject",
           color: fontColor(.8),
           weight: FontWeight.w800,
         ),

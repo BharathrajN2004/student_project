@@ -9,14 +9,14 @@ import '../../utilities/static_data.dart';
 Future<Map<String, dynamic>?> getUserData({
   required WidgetRef ref,
   required BuildContext context,
-  required String id,
+  required String email,
 }) async {
   Role role = ref.watch(userRoleProvider)!;
   String colName = "users";
   QuerySnapshot<Map<String, dynamic>> queryData = await FirebaseFirestore
       .instance
       .collection(colName)
-      .where("id", isEqualTo: id.toUpperCase())
+      .where("email", isEqualTo: email.toLowerCase())
       .get();
   if (queryData.docs.isNotEmpty) {
     Map<String, dynamic> userData =

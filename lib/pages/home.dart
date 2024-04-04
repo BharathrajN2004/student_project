@@ -101,14 +101,15 @@ class Home extends ConsumerWidget {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey,
+                          color: colorData.secondaryColor(.8),
+                          border: Border.all(color: colorData.secondaryColor(1),width: 2)
                         ),
-                        padding: const EdgeInsets.all(6),
+                        padding: const EdgeInsets.all(3),
                         margin: EdgeInsets.only(right: width * 0.04),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.asset(
-                            "${index + 1}",
+                            "assets/images/sdg_goals/${index + 1}.png",
                             height: aspectRatio * 120,
                             width: aspectRatio * 120,
                             fit: BoxFit.cover,

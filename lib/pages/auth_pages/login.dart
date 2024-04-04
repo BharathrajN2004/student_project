@@ -11,6 +11,7 @@ import '../../utilities/theme/size_data.dart';
 import '../../functions/firebase_auth.dart';
 
 import '../../components/common/text.dart';
+import '../auth.dart';
 
 class Login extends ConsumerStatefulWidget {
   const Login({super.key});
@@ -80,6 +81,13 @@ class _LoginState extends ConsumerState<Login> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
+            Positioned(
+              top: height * 0.02,
+              left: width * 0.04,
+              child: const CustomBackButton(
+                tomove: MainAuthPage(),
+              ),
+            ),
             Positioned(
               top: height * 0.05,
               right: 0,

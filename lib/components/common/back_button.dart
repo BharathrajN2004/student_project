@@ -19,8 +19,15 @@ class CustomBackButton extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pop(context);
         method != null ? method!() : null;
+        tomove != null
+            ? Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => tomove!,
+                ),
+              )
+            : Navigator.pop(context);
       },
       child: Container(
         padding: EdgeInsets.all(aspectRatio * 10),

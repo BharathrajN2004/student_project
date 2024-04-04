@@ -78,7 +78,7 @@ class CustomInputField extends ConsumerWidget {
                 fontWeight: FontWeight.w800,
                 fontSize: sizeData.regular,
                 color: colorData.fontColor(.8),
-                height: 1,
+                height: 1.2,
               ),
               cursorColor: colorData.primaryColor(1),
               cursorWidth: 2,
@@ -89,7 +89,7 @@ class CustomInputField extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                   fontSize: sizeData.regular,
                   color: colorData.fontColor(.5),
-                  height: 1,
+                  height: 1.2,
                 ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(

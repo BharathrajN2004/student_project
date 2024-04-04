@@ -108,7 +108,7 @@ class Home extends ConsumerWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.asset(
-                            "${index + 1}",
+                            "assets/images/sdg_goals/${index + 1}.png",
                             height: aspectRatio * 120,
                             width: aspectRatio * 120,
                             fit: BoxFit.cover,

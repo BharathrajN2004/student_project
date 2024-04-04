@@ -99,12 +99,19 @@ class Home extends ConsumerWidget {
                   Row(
                     children: [
                       Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.grey,
+                        ),
+                        padding: const EdgeInsets.all(6),
                         margin: EdgeInsets.only(right: width * 0.04),
                         child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
                           child: Image.asset(
                             "${index + 1}",
                             height: aspectRatio * 120,
                             width: aspectRatio * 120,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_project/components/common/photo_picker.dart';
+import 'package:student_project/functions/update/update_evaluatordata.dart';
 import 'package:student_project/utilities/static_data.dart';
 
 import '../components/common/back_button.dart';
@@ -11,7 +12,9 @@ import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
 class EvaluatorDetail extends ConsumerStatefulWidget {
-  const EvaluatorDetail({super.key});
+  const EvaluatorDetail({super.key, required this.from});
+
+  final From from;
 
   @override
   ConsumerState<EvaluatorDetail> createState() => _EvaluatorDetailState();
@@ -49,6 +52,7 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
     double height = sizeData.height;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(
@@ -65,7 +69,7 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                 from: From.add,
                 setter: setPhoto,
               ),
-              SizedBox(height: height * 0.02),
+              SizedBox(height: height * 0.04),
               Row(
                 children: [
                   CustomText(
@@ -90,6 +94,8 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         keyboardType: TextInputType.text,
                         style: TextStyle(
                           fontSize: sizeData.subHeader,
+                          fontWeight: FontWeight.w600,
+                          color: colorData.fontColor(.8),
                           height: 1,
                         ),
                         decoration: InputDecoration(
@@ -134,6 +140,8 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         keyboardType: TextInputType.text,
                         style: TextStyle(
                           fontSize: sizeData.subHeader,
+                          fontWeight: FontWeight.w600,
+                          color: colorData.fontColor(.8),
                           height: 1.25,
                         ),
                         maxLines: 3,
@@ -177,6 +185,8 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         keyboardType: TextInputType.text,
                         style: TextStyle(
                           fontSize: sizeData.subHeader,
+                          fontWeight: FontWeight.w600,
+                          color: colorData.fontColor(.8),
                           height: 1,
                         ),
                         decoration: InputDecoration(
@@ -217,10 +227,12 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                       ),
                       height: height * 0.04,
                       child: TextField(
-                        controller: nameCtr,
+                        controller: phoneNoCtr,
                         keyboardType: TextInputType.number,
                         style: TextStyle(
                           fontSize: sizeData.subHeader,
+                          fontWeight: FontWeight.w600,
+                          color: colorData.fontColor(.8),
                           height: 1,
                         ),
                         decoration: InputDecoration(
@@ -243,19 +255,41 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
               SizedBox(height: height * 0.08),
               Align(
                 alignment: Alignment.center,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: width * 0.1, vertical: height * 0.015),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: colorData.secondaryColor(.5),
-                    border: Border.all(
-                        color: colorData.secondaryColor(.8), width: 2),
-                  ),
-                  child: CustomText(
-                    text: "SAVE",
-                    size: sizeData.medium,
-                    weight: FontWeight.bold,
+                child: GestureDetector(
+                  onTap: () {
+                    if (nameCtr.text.isNotEmpty &&
+                        emailCtr.text.isNotEmpty &&
+                        phoneNoCtr.text.isNotEmpty &&
+                        specificationCtr.text.isNotEmpty) {
+                      updateEvaluatorData({
+                        "profile": photo.keys.first,
+                        "name": nameCtr.text,
+                        "email": emailCtr.text,
+                        "phoneNo": phoneNoCtr.text,
+                        "specialization": specificationCtr.text,
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Kindly enter all the data"),
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.1, vertical: height * 0.015),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: colorData.secondaryColor(.5),
+                      border: Border.all(
+                          color: colorData.secondaryColor(.8), width: 2),
+                    ),
+                    child: CustomText(
+                      text: "SAVE",
+                      size: sizeData.medium,
+                      weight: FontWeight.bold,
+                    ),
                   ),
                 ),
               )

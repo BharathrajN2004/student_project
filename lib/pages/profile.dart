@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:student_project/providers/user_detail_provider.dart';
 
 import '../components/common/network_image.dart';
 import '../components/profile/theme_toggle.dart';
@@ -16,6 +17,7 @@ class Profile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Map<String, dynamic> userData = ref.watch(userDataProvider) ?? {};
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -48,16 +50,14 @@ class Profile extends ConsumerWidget {
               CustomNetworkImage(size: aspectRatio * 250, radius: 500),
               SizedBox(height: height * 0.02),
               CustomText(
-                text: "sdfasdf",
-                //  userData["name"],
+                text: userData["name"],
                 size: sizeData.header,
                 weight: FontWeight.w800,
                 color: colorData.fontColor(.8),
               ),
               SizedBox(height: height * 0.005),
               CustomText(
-                text: "wersdfdf@gmail.com",
-                // userData["email"],
+                text: userData["email"],
                 size: sizeData.regular,
                 color: colorData.fontColor(.6),
               ),

@@ -23,7 +23,9 @@ class AuthShifter extends ConsumerWidget {
               .doc(snapshot.data!.email)
               .get()
               .then((value) {
-            ref.read(userDataProvider.notifier).addUserData(value.data()!);
+            Map<String, dynamic> userData = value.data()!;
+            userData.addAll({"email": value.id});
+            ref.read(userDataProvider.notifier).addUserData(userData);
           });
           return const Navigation();
         } else {

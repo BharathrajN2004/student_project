@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_project/pages/evaluator_detail.dart';
+import 'package:student_project/utilities/static_data.dart';
 
 import '../components/common/icon.dart';
 import '../components/common/network_image.dart';
@@ -97,18 +99,27 @@ class Evaluators extends ConsumerWidget {
                   ),
                   Row(
                     children: [
-                      Container(
-                        height: aspectRatio * 100,
-                        width: aspectRatio * 100,
-                        margin: EdgeInsets.only(right: width * 0.04),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: colorData.secondaryColor(.6),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const EvaluatorDetail(from: From.add),
+                          ),
                         ),
-                        child: CustomIcon(
-                          icon: Icons.add,
-                          size: aspectRatio * 60,
-                          color: colorData.fontColor(.8),
+                        child: Container(
+                          height: aspectRatio * 100,
+                          width: aspectRatio * 100,
+                          margin: EdgeInsets.only(right: width * 0.04),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: colorData.secondaryColor(.6),
+                          ),
+                          child: CustomIcon(
+                            icon: Icons.add,
+                            size: aspectRatio * 60,
+                            color: colorData.fontColor(.8),
+                          ),
                         ),
                       ),
                       Expanded(
@@ -121,7 +132,8 @@ class Evaluators extends ConsumerWidget {
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const EvaluatorDetail(),
+                                  builder: (context) =>
+                                      const EvaluatorDetail(from: From.edit),
                                 ),
                               ),
                               child: Container(

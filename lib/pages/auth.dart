@@ -39,7 +39,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Image.asset(
-                "assets/images/login.png",
+                "assets/images/evaluate.png",
                 height: height * 0.4,
                 fit: BoxFit.fitHeight,
               ),
@@ -49,7 +49,6 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -84,7 +83,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                 margin: EdgeInsets.symmetric(horizontal: width * 0.02),
                 child: CustomText(
                   text:
-                      '😉 Embark on a transformative learning voyage with REDHAT, where every click opens doors to new horizons.✌️',
+                      'Unlocking the hidden potential and       insights within every project, evaluation     is an art of uncovering value',
                   size: sizeData.medium,
                   color: fontColor(.6),
                   weight: FontWeight.w700,

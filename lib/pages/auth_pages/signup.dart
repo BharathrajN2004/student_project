@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:student_project/functions/read/get_userdata.dart';
 
 import '../../components/auth/loginsignup_shifter.dart';
-import '../../components/common/back_button.dart';
 import '../../components/common/footer.dart';
 import '../../components/common/inputfield.dart';
 import '../../functions/create/create_userData.dart';
+import '../../functions/read/get_userdata.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -79,161 +78,149 @@ class _SignupState extends ConsumerState<Signup> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xffDADEEC),
       body: SafeArea(
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              top: height * 0.02,
-              left: width * 0.04,
-              child: const CustomBackButton(),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Image(
-                height: height * .185,
-                image: const AssetImage("assets/images/redhat.png"),
+        child: Container(
+          margin: EdgeInsets.only(
+              left: width * 0.06, right: width * 0.06, top: height * 0.02),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Image(
+                  height: height * .125,
+                  image: const AssetImage("assets/images/logo.png"),
+                ),
               ),
-            ),
-            Container(
-              width: width,
-              padding: EdgeInsets.only(
-                  left: width * 0.05, right: width * 0.05, top: height * 0.2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: height * 0.02),
+              CustomText(
+                text: "Signup",
+                size: sizeData.superHeader,
+                color: fontColor(1),
+                weight: FontWeight.bold,
+              ),
+              SizedBox(
+                height: height * 0.01,
+              ),
+              CustomText(
+                text: "Create a account to continue",
+                size: sizeData.header,
+                color: fontColor(.6),
+                weight: FontWeight.bold,
+              ),
+              SizedBox(
+                height: height * 0.04,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CustomText(
-                    text: "Signup",
-                    size: sizeData.superHeader,
-                    color: fontColor(1),
-                    weight: FontWeight.bold,
-                  ),
-                  SizedBox(
-                    height: height * 0.01,
-                  ),
-                  CustomText(
-                    text: "Create a account to continue",
-                    size: sizeData.header,
-                    color: fontColor(.6),
-                    weight: FontWeight.bold,
-                  ),
-                  SizedBox(
-                    height: height * 0.04,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: CustomInputField(
-                          icon: Icons.fingerprint_rounded,
-                          controller: idCtr,
-                          hintText: hintText,
-                          inputType: TextInputType.text,
-                          bottomMar: 0,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _generateUserData(),
-                        child: Container(
-                          margin: EdgeInsets.only(left: width * 0.02),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: width * 0.03,
-                            vertical: height * 0.008,
-                          ),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: secondaryColor(.5)),
-                          child: CustomText(
-                            text: "GENERATE",
-                            weight: FontWeight.bold,
-                            color: primaryColors[0],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: CustomText(
-                      text: "Enter the $hintText and generate to signup!",
-                      weight: FontWeight.w700,
-                      color: const Color.fromARGB(255, 80, 143, 82),
+                  Expanded(
+                    child: CustomInputField(
+                      icon: Icons.email_rounded,
+                      controller: idCtr,
+                      hintText: hintText,
+                      inputType: TextInputType.text,
+                      bottomMar: 0,
                     ),
-                  ),
-                  SizedBox(
-                    height: height * 0.03,
-                  ),
-                  CustomInputField(
-                    controller: nameCtr,
-                    hintText: "NAME",
-                    icon: Icons.person_rounded,
-                    inputType: TextInputType.text,
-                    readOnly: generatedData.isEmpty,
-                  ),
-                  CustomInputField(
-                    controller: emailCtr,
-                    hintText: "EMAIL",
-                    icon: Icons.email_rounded,
-                    inputType: TextInputType.emailAddress,
-                    readOnly: true,
-                  ),
-                  CustomInputField(
-                    controller: passwordCtr,
-                    hintText: "PASSWORD",
-                    icon: Icons.password_rounded,
-                    inputType: TextInputType.visiblePassword,
-                    readOnly: generatedData.isEmpty,
-                    visibleText: false,
                   ),
                   GestureDetector(
-                    onTap:
-                        generatedData.isNotEmpty ? () => _createUser() : () {},
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: AnimatedContainer(
-                        duration: Durations.medium4,
-                        margin: EdgeInsets.only(top: height * 0.04),
-                        padding: EdgeInsets.symmetric(vertical: height * .0125),
-                        width: width * 0.325,
-                        decoration: BoxDecoration(
-                          color: primaryColors[0]
-                              .withOpacity(generatedData.isNotEmpty ? 1 : .5),
-                          borderRadius: BorderRadius.circular(50),
-                          boxShadow: generatedData.isNotEmpty
-                              ? [
-                                  BoxShadow(
-                                    color: primaryColors[0].withOpacity(.2),
-                                    blurRadius: 12,
-                                    offset: const Offset(-4, -4),
-                                  ),
-                                  BoxShadow(
-                                    color: primaryColors[0].withOpacity(.2),
-                                    blurRadius: 16,
-                                    offset: const Offset(4, 4),
-                                  ),
-                                ]
-                              : [],
-                        ),
-                        alignment: Alignment.center,
-                        child: CustomText(
-                          weight: FontWeight.bold,
-                          text: "SIGNUP",
-                          size: sizeData.medium,
-                          color: Colors.white,
-                        ),
+                    onTap: () => _generateUserData(),
+                    child: Container(
+                      margin: EdgeInsets.only(left: width * 0.02),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.03,
+                        vertical: height * 0.008,
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: secondaryColor(.5)),
+                      child: CustomText(
+                        text: "GENERATE",
+                        weight: FontWeight.bold,
+                        color: primaryColors[0],
                       ),
                     ),
-                  ),
-                  const Spacer(),
-                  const LoginSingupShifter(shifter: LoginSignup.signup),
-                  const Footer(),
+                  )
                 ],
               ),
-            ),
-          ],
+              SizedBox(
+                height: height * 0.02,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: CustomText(
+                  text: "Enter the $hintText and generate to signup!",
+                  weight: FontWeight.w700,
+                  color: const Color.fromARGB(255, 80, 143, 82),
+                ),
+              ),
+              SizedBox(
+                height: height * 0.03,
+              ),
+              CustomInputField(
+                controller: nameCtr,
+                hintText: "NAME",
+                icon: Icons.person_rounded,
+                inputType: TextInputType.text,
+                readOnly: generatedData.isEmpty,
+              ),
+              CustomInputField(
+                controller: emailCtr,
+                hintText: "EMAIL",
+                icon: Icons.email_rounded,
+                inputType: TextInputType.emailAddress,
+                readOnly: true,
+              ),
+              CustomInputField(
+                controller: passwordCtr,
+                hintText: "PASSWORD",
+                icon: Icons.password_rounded,
+                inputType: TextInputType.visiblePassword,
+                readOnly: generatedData.isEmpty,
+                visibleText: false,
+              ),
+              GestureDetector(
+                onTap: generatedData.isNotEmpty ? () => _createUser() : () {},
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: AnimatedContainer(
+                    duration: Durations.medium4,
+                    margin: EdgeInsets.only(top: height * 0.04),
+                    padding: EdgeInsets.symmetric(vertical: height * .0125),
+                    width: width * 0.325,
+                    decoration: BoxDecoration(
+                      color: primaryColors[0]
+                          .withOpacity(generatedData.isNotEmpty ? 1 : .5),
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: generatedData.isNotEmpty
+                          ? [
+                              BoxShadow(
+                                color: primaryColors[0].withOpacity(.2),
+                                blurRadius: 12,
+                                offset: const Offset(-4, -4),
+                              ),
+                              BoxShadow(
+                                color: primaryColors[0].withOpacity(.2),
+                                blurRadius: 16,
+                                offset: const Offset(4, 4),
+                              ),
+                            ]
+                          : [],
+                    ),
+                    alignment: Alignment.center,
+                    child: CustomText(
+                      weight: FontWeight.bold,
+                      text: "SIGNUP",
+                      size: sizeData.medium,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              const LoginSingupShifter(shifter: LoginSignup.signup),
+              const Footer(),
+            ],
+          ),
         ),
       ),
     );

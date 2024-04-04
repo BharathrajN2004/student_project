@@ -3,8 +3,6 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:student_project/auth_shifter.dart';
 
-import 'Navigation.dart';
-
 class Splash extends StatelessWidget {
   const Splash({super.key});
 
@@ -31,7 +29,7 @@ class Splash extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Student',
+                      text: 'Student ',
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w600,

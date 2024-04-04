@@ -81,17 +81,18 @@ class _LoginState extends ConsumerState<Login> {
           clipBehavior: Clip.none,
           children: [
             Positioned(
-              top: 0,
+              top: height * 0.05,
               right: 0,
+              left: 0,
               child: Image(
-                height: height * .185,
-                image: const AssetImage("assets/images/redhat.png"),
+                height: height * .13,
+                image: const AssetImage("assets/images/logo.png"),
               ),
             ),
             Container(
               width: width,
               padding: EdgeInsets.only(
-                  left: width * 0.05, right: width * 0.05, top: height * 0.2),
+                  left: width * 0.05, right: width * 0.05, top: height * 0.225),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

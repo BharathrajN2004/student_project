@@ -100,9 +100,12 @@ class Home extends ConsumerWidget {
                     children: [
                       Container(
                         margin: EdgeInsets.only(right: width * 0.04),
-                        child: ShimmerBox(
-                          height: aspectRatio * 120,
-                          width: aspectRatio * 120,
+                        child: ClipRRect(
+                          child: Image.asset(
+                            "${index + 1}",
+                            height: aspectRatio * 120,
+                            width: aspectRatio * 120,
+                          ),
                         ),
                       ),
                       Expanded(

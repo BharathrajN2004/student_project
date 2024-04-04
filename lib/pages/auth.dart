@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../components/common/back_button.dart';
 import '../components/common/text.dart';
 import '../utilities/static_data.dart';
 

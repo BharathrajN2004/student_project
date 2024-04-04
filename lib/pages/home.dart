@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:student_project/components/common/icon.dart';
-import 'package:student_project/components/common/shimmer_box.dart';
-import 'package:student_project/pages/profile.dart';
-import 'package:student_project/pages/view_result.dart';
 
+import '../components/common/icon.dart';
 import '../components/common/network_image.dart';
 import '../components/common/text.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
+import 'profile.dart';
+import 'view_result.dart';
 
 class Home extends ConsumerWidget {
   const Home({super.key});
@@ -100,10 +99,10 @@ class Home extends ConsumerWidget {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: colorData.secondaryColor(.8),
-                          border: Border.all(color: colorData.secondaryColor(1),width: 2)
-                        ),
+                            borderRadius: BorderRadius.circular(8),
+                            color: colorData.secondaryColor(.8),
+                            border: Border.all(
+                                color: colorData.secondaryColor(1), width: 2)),
                         padding: const EdgeInsets.all(3),
                         margin: EdgeInsets.only(right: width * 0.04),
                         child: ClipRRect(

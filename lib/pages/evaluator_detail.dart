@@ -256,18 +256,31 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
               Align(
                 alignment: Alignment.center,
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if (nameCtr.text.isNotEmpty &&
                         emailCtr.text.isNotEmpty &&
                         phoneNoCtr.text.isNotEmpty &&
                         specificationCtr.text.isNotEmpty) {
-                      updateEvaluatorData({
+                      bool check = await updateEvaluatorData({
                         "profile": photo.keys.first,
                         "name": nameCtr.text,
                         "email": emailCtr.text,
                         "phoneNo": phoneNoCtr.text,
                         "specialization": specificationCtr.text,
                       });
+                      if (check) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Kindly enter all the data"),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Kindly enter all the data"),
+                          ),
+                        );
+                      }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

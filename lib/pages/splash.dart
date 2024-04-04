@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:student_project/auth_shifter.dart';
 
 import 'Navigation.dart';
 
@@ -27,21 +28,23 @@ class Splash extends StatelessWidget {
                 height: height * 0.1,
               ),
               RichText(
-                text: TextSpan(children: [
-                  TextSpan(
-                    text: 'Student',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontSize: width * 0.07),
-                  ),
-                  TextSpan(
-                      text: 'Projects',
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Student',
                       style: TextStyle(
-                          color: const Color.fromARGB(255, 99, 82, 255),
-                          fontWeight: FontWeight.w800,
-                          fontSize: width * 0.08))
-                ]),
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: width * 0.07),
+                    ),
+                    TextSpan(
+                        text: 'Projects',
+                        style: TextStyle(
+                            color: const Color.fromARGB(255, 99, 82, 255),
+                            fontWeight: FontWeight.w800,
+                            fontSize: width * 0.08))
+                  ],
+                ),
               )
             ],
           ),
@@ -51,7 +54,7 @@ class Splash extends StatelessWidget {
         animationDuration: const Duration(milliseconds: 500),
         duration: 3000,
         backgroundColor: Colors.grey.shade50,
-        nextScreen: const Navigation(),
+        nextScreen: const AuthShifter(),
       ),
     );
   }

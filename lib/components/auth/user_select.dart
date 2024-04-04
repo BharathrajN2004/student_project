@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../providers/user_select_provider.dart';
+import '../../utilities/static_data.dart';
 import '../../utilities/theme/size_data.dart';
 import '../common/text.dart';
 
@@ -22,7 +22,7 @@ class UserSelect extends ConsumerWidget {
   final List<Color> shaderColors;
   final double? size;
   final double? hpad;
-  final UserRole role;
+  final Role role;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

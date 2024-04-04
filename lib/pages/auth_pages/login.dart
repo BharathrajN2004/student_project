@@ -81,13 +81,6 @@ class _LoginState extends ConsumerState<Login> {
           clipBehavior: Clip.none,
           children: [
             Positioned(
-              top: height * 0.02,
-              left: width * 0.04,
-              child: const CustomBackButton(
-                  // tomove: MainAuthPage(),
-                  ),
-            ),
-            Positioned(
               top: 0,
               right: 0,
               child: Image(

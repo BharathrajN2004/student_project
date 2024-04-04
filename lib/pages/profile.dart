@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../components/common/network_image.dart';
-import '../providers/user_detail_provider.dart';
-import '../components/profile/color_palette.dart';
 import '../components/profile/theme_toggle.dart';
 import '../functions/firebase_auth.dart';
 import '../utilities/theme/color_data.dart';
@@ -18,7 +16,6 @@ class Profile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = {};
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

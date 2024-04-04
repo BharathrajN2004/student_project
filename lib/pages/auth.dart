@@ -84,7 +84,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                 margin: EdgeInsets.symmetric(horizontal: width * 0.02),
                 child: CustomText(
                   text:
-                      'Unlocking the hidden potential and       insights within every project, evaluation     is an art of uncovering value',
+                      'Unlocking the hidden potential and insights within every project, evaluation is an art of uncovering value',
                   size: sizeData.medium,
                   color: fontColor(.6),
                   weight: FontWeight.w700,

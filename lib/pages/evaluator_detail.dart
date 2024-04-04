@@ -257,10 +257,12 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                 alignment: Alignment.center,
                 child: GestureDetector(
                   onTap: () async {
+                  onTap: () async {
                     if (nameCtr.text.isNotEmpty &&
                         emailCtr.text.isNotEmpty &&
                         phoneNoCtr.text.isNotEmpty &&
                         specificationCtr.text.isNotEmpty) {
+                      bool check = await updateEvaluatorData({
                       bool check = await updateEvaluatorData({
                         "profile": photo.keys.first,
                         "name": nameCtr.text,
@@ -279,6 +281,19 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Unsuccessfully"),
+                          ),
+                        );
+                      }
+                      if (check) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Kindly enter all the data"),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Kindly enter all the data"),
                           ),
                         );
                       }

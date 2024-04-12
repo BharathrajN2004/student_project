@@ -25,7 +25,6 @@ class _SignupState extends ConsumerState<Signup> {
   TextEditingController nameCtr = TextEditingController();
   TextEditingController emailCtr = TextEditingController();
   TextEditingController passwordCtr = TextEditingController();
-  TextEditingController phoneN0Ctr = TextEditingController();
 
   Map<String, dynamic> generatedData = {};
 
@@ -34,6 +33,7 @@ class _SignupState extends ConsumerState<Signup> {
     emailCtr.dispose();
     passwordCtr.dispose();
     nameCtr.dispose();
+    phoneNoCtr.dispose();
     super.dispose();
   }
 
@@ -45,6 +45,7 @@ class _SignupState extends ConsumerState<Signup> {
         generatedData = userData;
         emailCtr.text = userData["email"];
         nameCtr.text = userData["name"];
+        phoneNoCtr.text = userData["phoneNo"];
       });
     }
   }

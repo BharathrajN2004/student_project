@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_project/components/common/photo_picker.dart';
+import 'package:student_project/functions/create/evaluator.dart';
 import 'package:student_project/functions/update/update_evaluatordata.dart';
 import 'package:student_project/utilities/static_data.dart';
 
@@ -12,9 +13,12 @@ import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
 class EvaluatorDetail extends ConsumerStatefulWidget {
-  const EvaluatorDetail({super.key, required this.from});
+  const EvaluatorDetail(
+      {super.key, required this.from, this.data, required this.goal});
 
   final From from;
+  final Map<String, dynamic>? data;
+  final String goal;
 
   @override
   ConsumerState<EvaluatorDetail> createState() => _EvaluatorDetailState();
@@ -22,11 +26,12 @@ class EvaluatorDetail extends ConsumerStatefulWidget {
 
 class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
   TextEditingController nameCtr = TextEditingController();
-  TextEditingController specificationCtr = TextEditingController();
+  TextEditingController specializationCtr = TextEditingController();
   TextEditingController emailCtr = TextEditingController();
   TextEditingController phoneNoCtr = TextEditingController();
 
   Map<File, String> photo = {};
+  String? photoUrl;
 
   void setPhoto(File photo, String photoName) {
     setState(() {
@@ -35,9 +40,21 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.from == From.edit) {
+      emailCtr.text = widget.data!["email"];
+      nameCtr.text = widget.data!["name"];
+      specializationCtr.text = widget.data!["specialization"];
+      phoneNoCtr.text = widget.data!["phoneNo"];
+      photoUrl = widget.data!["profile"];
+    }
+  }
+
+  @override
   void dispose() {
     nameCtr.dispose();
-    specificationCtr.dispose();
+    specializationCtr.dispose();
     emailCtr.dispose();
     phoneNoCtr.dispose();
     super.dispose();
@@ -66,8 +83,9 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
               const CustomBackButton(),
               SizedBox(height: height * 0.04),
               PhotoPicker(
-                from: From.add,
+                from: widget.from,
                 setter: setPhoto,
+                photoURL: photoUrl,
               ),
               SizedBox(height: height * 0.04),
               Row(
@@ -101,8 +119,6 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Enter the Evaluator Name",
-                          contentPadding:
-                              EdgeInsets.only(bottom: height * 0.015),
                           hintStyle: TextStyle(
                             fontSize: sizeData.medium,
                             color: colorData.fontColor(.6),
@@ -136,7 +152,7 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                       ),
                       height: height * 0.08,
                       child: TextField(
-                        controller: specificationCtr,
+                        controller: specializationCtr,
                         keyboardType: TextInputType.text,
                         style: TextStyle(
                           fontSize: sizeData.subHeader,
@@ -181,6 +197,7 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                       ),
                       height: height * 0.04,
                       child: TextField(
+                        readOnly: widget.from == From.edit,
                         controller: emailCtr,
                         keyboardType: TextInputType.text,
                         style: TextStyle(
@@ -191,14 +208,12 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         ),
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(bottom: height * 0.015),
                           hintText: "Enter the Evaluator Email ID",
                           hintStyle: TextStyle(
                             fontSize: sizeData.medium,
                             color: colorData.fontColor(.6),
                             height: 1,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold, 
                           ),
                         ),
                       ),
@@ -237,8 +252,6 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         ),
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(bottom: height * 0.015),
                           hintText: "Enter the Evaluator Phone No",
                           hintStyle: TextStyle(
                             fontSize: sizeData.medium,
@@ -260,25 +273,40 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                     if (nameCtr.text.isNotEmpty &&
                         emailCtr.text.isNotEmpty &&
                         phoneNoCtr.text.isNotEmpty &&
-                        specificationCtr.text.isNotEmpty) {
-                      bool check = await updateEvaluatorData({
-                        "profile": photo.keys.first,
-                        "name": nameCtr.text,
-                        "email": emailCtr.text,
-                        "phoneNo": phoneNoCtr.text,
-                        "specialization": specificationCtr.text,
-                      });
+                        specializationCtr.text.isNotEmpty) {
+                      bool check;
+                      if (widget.from == From.add) {
+                        check = await createEvaluator({
+                          "profile": photo.keys.first,
+                          "name": nameCtr.text,
+                          "email": emailCtr.text,
+                          "phoneNo": phoneNoCtr.text,
+                          "specialization": specializationCtr.text,
+                          "goal": widget.goal
+                        });
+                      } else {
+                        check = await updateEvaluatorData({
+                          "profile": photo.keys.first,
+                          "name": nameCtr.text,
+                          "email": emailCtr.text,
+                          "phoneNo": phoneNoCtr.text,
+                          "specialization": specializationCtr.text,
+                        });
+                      }
                       if (check) {
+                        Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content:
-                                Text("Evaluator details saved successfully"),
+                            content: Center(
+                                child: Text(
+                                    "Evaluator details saved successfully")),
                           ),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text("Kindly enter all the data"),
+                            content: Center(
+                                child: Text("Kindly enter all the data")),
                           ),
                         );
                       }

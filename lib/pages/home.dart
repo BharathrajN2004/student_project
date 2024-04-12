@@ -119,6 +119,55 @@ class Home extends ConsumerWidget {
           ),
         ),
         SizedBox(height: height * 0.04),
+        Container(
+          height: height * 0.2,
+          width: width,
+          margin: EdgeInsets.only(top: height * 0.01),
+          child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: (10 / 7),
+              ),
+              itemCount: 4,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                    padding: EdgeInsets.all(10.0),
+                    width: 6,
+                    height: 300,
+                    decoration: BoxDecoration(
+                        color: colorData.secondaryColor(.3),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: colorData.secondaryColor(0.8), width: 2)),
+                    child: const Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(8.0, 20.0, 8.0, 10.0),
+                          child: CustomText(
+                            text: "Ideathon 2.0",
+                            size: 20,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(3, 10, 3, 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(),
+                              CustomText(
+                                text: "March 17, 2024",
+                                size: 10,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ));
+              }),
+        ),
+        SizedBox(height: height * 0.04),
         Expanded(
           child: StreamBuilder(
               stream: FirebaseFirestore.instance.collection("data").snapshots(),

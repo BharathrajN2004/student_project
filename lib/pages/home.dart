@@ -8,6 +8,7 @@ import '../components/common/network_image.dart';
 import '../components/common/text.dart';
 import '../model/goaldata.dart';
 import '../utilities/theme/color_data.dart';
+
 import '../utilities/theme/size_data.dart';
 import 'profile.dart';
 import 'view_result.dart';
@@ -29,7 +30,7 @@ class HomeState extends ConsumerState<Home> {
     "Solvathon 2.0",
     "Ideathon 3.0",
     "Inspireathon 4.0",
-    "Invoathon 5.0"
+    "Invoathon 5.0",
   ];
 
   List<String> searchedEvents = [];

@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_project/providers/user_detail_provider.dart';
 
@@ -14,11 +12,42 @@ import '../utilities/theme/size_data.dart';
 import 'profile.dart';
 import 'view_result.dart';
 
-class Home extends ConsumerWidget {
+class Home extends ConsumerStatefulWidget {
   const Home({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Home> createState() => HomeState();
+}
+
+class HomeState extends ConsumerState<Home> {
+  TextEditingController eventCtr = TextEditingController();
+
+  String? selectedEvent;
+
+  List<String> events = [
+    "Invoathon 1.0",
+    "Solvathon 2.0",
+    "Ideathon 3.0",
+    "Inspireathon 4.0",
+    "Invoathon 5.0"
+  ];
+
+  List<String> searchedEvents = [];
+
+  void setEvent(String event) {
+    setState(() {
+      eventCtr.text = event;
+    });
+  }
+
+  @override
+  void dispose() {
+    eventCtr.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     Map<String, dynamic> userData = ref.watch(userDataProvider) ?? {};
     List<GoalData> allGoalData = [];
 
@@ -28,6 +57,17 @@ class Home extends ConsumerWidget {
     double width = sizeData.width;
     double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
+
+    eventCtr.addListener(() {
+      setState(() {
+        searchedEvents = events
+            .where((element) => element
+                .trim()
+                .toLowerCase()
+                .startsWith(eventCtr.text.trim().toLowerCase()))
+            .toList();
+      });
+    });
 
     return Column(
       children: [
@@ -66,6 +106,10 @@ class Home extends ConsumerWidget {
             ),
           ),
           child: TextField(
+            onTap: () => setState(() {
+              selectedEvent = null;
+            }),
+            controller: eventCtr,
             scrollPadding: EdgeInsets.zero,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.only(
@@ -87,38 +131,56 @@ class Home extends ConsumerWidget {
             ),
           ),
         ),
-        Container(
-          height: height * 0.1,
-          width: width,
-          margin: EdgeInsets.only(top: height * 0.01),
-          padding: EdgeInsets.only(
-              top: height * 0.01,
-              left: width * 0.04,
-              right: width * 0.04,
-              bottom: height * 0.005),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: colorData.secondaryColor(.3),
-            border: Border.all(color: colorData.secondaryColor(1), width: 2),
-          ),
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                child: Container(
-                  padding: EdgeInsets.only(bottom: height * 0.005),
-                  color: Colors.transparent,
-                  child: CustomText(
-                    text: "Inavothan 2.0",
-                    color: colorData.fontColor(.7),
-                  ),
+        eventCtr.text != ""
+            ? Container(
+                height: height * 0.1,
+                width: width,
+                margin: EdgeInsets.only(top: height * 0.01),
+                padding: EdgeInsets.only(
+                    top: height * 0.01,
+                    left: width * 0.04,
+                    right: width * 0.04,
+                    bottom: height * 0.005),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: colorData.secondaryColor(.3),
+                  border:
+                      Border.all(color: colorData.secondaryColor(1), width: 2),
                 ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: height * 0.04),
+                child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: searchedEvents.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => setState(() {
+                        selectedEvent = searchedEvents[index];
+                        eventCtr.clear();
+                        searchedEvents.clear();
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      }),
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: height * 0.005),
+                        color: Colors.transparent,
+                        child: CustomText(
+                          text: searchedEvents[index],
+                          color: colorData.fontColor(.7),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            : const SizedBox(),
+        SizedBox(height: height * 0.03),
+        selectedEvent != null
+            ? CustomText(
+                text: selectedEvent!.toUpperCase(),
+                size: sizeData.medium,
+                weight: FontWeight.w800,
+                color: colorData.fontColor(1),
+              )
+            : const SizedBox(),
+        SizedBox(height: selectedEvent != null ? height * 0.01 : 0),
         Expanded(
           child: StreamBuilder(
               stream: FirebaseFirestore.instance.collection("data").snapshots(),

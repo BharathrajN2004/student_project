@@ -62,11 +62,13 @@ class Loading extends ConsumerWidget {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: colorData.secondaryColor(.8),
-                                border: Border.all(
-                                    color: colorData.secondaryColor(1),
-                                    width: 2)),
+                              borderRadius: BorderRadius.circular(8),
+                              color: colorData.secondaryColor(.8),
+                              border: Border.all(
+                                color: colorData.secondaryColor(1),
+                                width: 2,
+                              ),
+                            ),
                             padding: const EdgeInsets.all(3),
                             margin: EdgeInsets.only(right: width * 0.04),
                             child: ShimmerBox(

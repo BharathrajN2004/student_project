@@ -1,7 +1,11 @@
-<<<<<<< HEAD
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:student_project/pages/goal_search.dart';
+import 'package:student_project/providers/data_provider.dart';
 import 'package:student_project/providers/user_detail_provider.dart';
 
 import '../components/common/icon.dart';
@@ -24,23 +28,9 @@ class Home extends ConsumerStatefulWidget {
 class HomeState extends ConsumerState<Home> {
   TextEditingController eventCtr = TextEditingController();
 
-  String? selectedEvent;
+  EventData? selectedEvent;
 
-  List<String> events = [
-    "Invoathon 1.0",
-    "Solvathon 2.0",
-    "Ideathon 3.0",
-    "Inspireathon 4.0",
-    "Invoathon 5.0",
-  ];
-
-  List<String> searchedEvents = [];
-
-  void setEvent(String event) {
-    setState(() {
-      eventCtr.text = event;
-    });
-  }
+  List<EventData> searchedEvents = [];
 
   @override
   void dispose() {
@@ -48,10 +38,96 @@ class HomeState extends ConsumerState<Home> {
     super.dispose();
   }
 
+  Future<void> generateEventData(int numEvents, int minProjectsPerGoal) async {
+    final Random random = Random();
+
+    Map<String, Map<String, Map<String, dynamic>>> eventData = {};
+
+    List<String> events = [
+      "Inovathon",
+      "Ideathon",
+      "Inspireathon",
+      "Solvathon"
+    ];
+
+    for (int i = 1; i <= numEvents; i++) {
+      events.shuffle();
+      String eventName = "${events[0]} $i.0";
+      Map<String, Map<String, dynamic>> eventDetails = {};
+
+      // Generate goals
+      for (int j = 1; j <= 17; j++) {
+        String goalName = "goal $j";
+        Map<String, dynamic> goalDetails = {};
+
+        // // Generate evaluators
+        // List<String> evaluators = [];
+        // for (int k = 0; k < 2; k++) {
+        //   evaluators.add("evaluator${random.nextInt(50)}@example.com");
+        // }
+        // goalDetails["evaluators"] = evaluators;
+
+        // Generate projects
+        Map<String, Map<String, dynamic>> projects = {};
+        for (int l = 1; l <= minProjectsPerGoal; l++) {
+          String projectName =
+              "Project ${String.fromCharCode(65 + random.nextInt(26))}${String.fromCharCode(65 + random.nextInt(26))}${random.nextInt(100)} $l";
+          Map<String, dynamic> projectDetails = {
+            "id": l.toString(),
+            "members": ["Member 1", "Member 2", "Member 3"],
+            "name":
+                "Team ${String.fromCharCode(65 + random.nextInt(26))}${String.fromCharCode(65 + random.nextInt(26))}${random.nextInt(100)}"
+          };
+          projects[projectName] = projectDetails;
+        }
+        goalDetails["projects"] = projects;
+
+        eventDetails[goalName] = goalDetails;
+      }
+
+      eventData[eventName] = eventDetails;
+      await FirebaseFirestore.instance
+          .collection("events")
+          .doc(eventName)
+          .set(eventDetails, SetOptions(merge: true));
+    }
+  }
+
+  void updateSearchedEvents(List<EventData> allEventData) {
+    setState(() {
+      if (eventCtr.text.isNotEmpty) {
+        searchedEvents = allEventData
+            .where((element) => element.name
+                .toLowerCase()
+                .startsWith(eventCtr.text.trim().toLowerCase()))
+            .toList();
+      } else {
+        searchedEvents = allEventData;
+      }
+    });
+  }
+
+  bool checkForProject(int index) {
+    return selectedEvent != null &&
+        selectedEvent!.goalData.isNotEmpty &&
+        selectedEvent!.goalData.length > index &&
+        selectedEvent!.goalData[index].projectData != null &&
+        selectedEvent!.goalData[index].projectData!.isNotEmpty;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    eventCtr.addListener(() {
+      setState(() {});
+    });
+    // generateEventData(10, 6);
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> userData = ref.watch(userDataProvider) ?? {};
-    List<GoalData> allGoalData = [];
+    List<EventData> allEventData = ref.watch(dataProvider) ?? [];
 
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
@@ -60,16 +136,16 @@ class HomeState extends ConsumerState<Home> {
     double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
 
-    eventCtr.addListener(() {
-      setState(() {
-        searchedEvents = events
-            .where((element) => element
-                .trim()
+    searchedEvents = allEventData
+        .where((element) => eventCtr.text.isNotEmpty
+            ? element.name
                 .toLowerCase()
-                .startsWith(eventCtr.text.trim().toLowerCase()))
-            .toList();
-      });
-    });
+                .startsWith(eventCtr.text.trim().toLowerCase())
+            : true)
+        .toList();
+
+    selectedEvent?.goalData.sort((a, b) => int.parse(a.name.split(" ")[1])
+        .compareTo(int.parse(b.name.split(" ")[1])));
 
     return Column(
       children: [
@@ -133,50 +209,64 @@ class HomeState extends ConsumerState<Home> {
             ),
           ),
         ),
-        eventCtr.text != ""
-            ? Container(
-                height: height * 0.1,
-                width: width,
-                margin: EdgeInsets.only(top: height * 0.01),
-                padding: EdgeInsets.only(
-                    top: height * 0.01,
-                    left: width * 0.04,
-                    right: width * 0.04,
-                    bottom: height * 0.005),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: colorData.secondaryColor(.3),
-                  border:
-                      Border.all(color: colorData.secondaryColor(1), width: 2),
+        SizedBox(height: height * 0.02),
+        searchedEvents.isEmpty && eventCtr.text.isNotEmpty
+            ? Center(
+                child: CustomText(
+                  text: "No event's are available with this name",
+                  color: colorData.fontColor(.7),
+                  weight: FontWeight.w600,
                 ),
+              )
+            : SizedBox(
+                height: height * 0.04,
+                width: width,
                 child: ListView.builder(
-                  scrollDirection: Axis.vertical,
+                  scrollDirection: Axis.horizontal,
                   itemCount: searchedEvents.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () => setState(() {
-                        selectedEvent = searchedEvents[index];
+                        if (selectedEvent == searchedEvents[index]) {
+                          selectedEvent = null;
+                        } else {
+                          selectedEvent = searchedEvents[index];
+                        }
                         eventCtr.clear();
-                        searchedEvents.clear();
+                        searchedEvents = allEventData;
                         FocusScope.of(context).requestFocus(FocusNode());
                       }),
                       child: Container(
-                        padding: EdgeInsets.only(bottom: height * 0.005),
-                        color: Colors.transparent,
+                        margin: EdgeInsets.only(right: width * 0.03),
+                        padding: EdgeInsets.symmetric(
+                            vertical: height * 0.005, horizontal: width * 0.02),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: selectedEvent == searchedEvents[index]
+                              ? colorData.secondaryColor(.5)
+                              : colorData.secondaryColor(.1),
+                          border: Border.all(
+                            color: selectedEvent == searchedEvents[index]
+                                ? colorData.secondaryColor(.8)
+                                : colorData.secondaryColor(.4),
+                            width: 2,
+                          ),
+                        ),
+                        alignment: Alignment.center,
                         child: CustomText(
-                          text: searchedEvents[index],
-                          color: colorData.fontColor(.7),
+                          text: searchedEvents[index].name,
+                          color: colorData.fontColor(
+                              selectedEvent == searchedEvents[index] ? 1 : .7),
                         ),
                       ),
                     );
                   },
                 ),
-              )
-            : const SizedBox(),
-        SizedBox(height: height * 0.03),
+              ),
+        SizedBox(height: height * 0.02),
         selectedEvent != null
             ? CustomText(
-                text: selectedEvent!.toUpperCase(),
+                text: selectedEvent!.name.toUpperCase(),
                 size: sizeData.medium,
                 weight: FontWeight.w800,
                 color: colorData.fontColor(1),
@@ -184,62 +274,8 @@ class HomeState extends ConsumerState<Home> {
             : const SizedBox(),
         SizedBox(height: selectedEvent != null ? height * 0.01 : 0),
         Expanded(
-          child: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection("data").snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  allGoalData = [];
-                  Map<String, Map<String, dynamic>> allData = {};
-                  for (var element in snapshot.data!.docs) {
-                    allData.addAll({element.id: element.data()});
-                  }
-
-                  allData.forEach((String key, Map<String, dynamic> value) {
-                    String goalName = key;
-                    List<String> evaluators =
-                        List<String>.from(value["evaluators"]);
-
-                    Map<String, dynamic>? projectData =
-                        value["projects"] != null
-                            ? Map<String, dynamic>.from(value["projects"])
-                            : null;
-                    List<ProjectData> allProjects = [];
-
-                    if (projectData != null) {
-                      projectData.forEach((key, value) {
-                        Map<String, dynamic> projectDataMap =
-                            Map<String, dynamic>.from(value);
-                        String idea = key;
-                        // String name = projectDataMap["name"];
-                        List<String> members =
-                            List<String>.from(projectDataMap["members"]);
-                        Map<String, dynamic>? marksMap =
-                            projectDataMap["marks"] != null
-                                ? Map<String, dynamic>.from(
-                                    projectDataMap["marks"])
-                                : null;
-
-                        Map<String, Map<String, dynamic>>? completeMarksMap =
-                            marksMap != null
-                                ? Map<String, Map<String, dynamic>>.from(
-                                    marksMap)
-                                : null;
-
-                        allProjects.add(ProjectData(
-                            idea: idea,
-                            members: members,
-                            marks: completeMarksMap));
-                      });
-                    }
-
-                    allGoalData.add(GoalData(
-                        name: goalName,
-                        evaluators: evaluators,
-                        projectData: allProjects));
-                  });
-                }
-
-                return ListView.builder(
+          child: selectedEvent != null
+              ? ListView.builder(
                   itemCount: 17,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, index) {
@@ -256,55 +292,63 @@ class HomeState extends ConsumerState<Home> {
                         ),
                         Row(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: colorData.secondaryColor(.8),
-                                border: Border.all(
-                                  color: colorData.secondaryColor(1),
-                                  width: 2,
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GoalWiseSearch(
+                                          goalData:
+                                              selectedEvent!.goalData[index]))),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: colorData.secondaryColor(.8),
+                                  border: Border.all(
+                                    color: colorData.secondaryColor(1),
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              padding: const EdgeInsets.all(3),
-                              margin: EdgeInsets.only(right: width * 0.04),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.asset(
-                                  "assets/images/sdg_goals/${index + 1}.png",
-                                  height: aspectRatio * 120,
-                                  width: aspectRatio * 120,
-                                  fit: BoxFit.cover,
+                                padding: const EdgeInsets.all(3),
+                                margin: EdgeInsets.only(right: width * 0.04),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    "assets/images/sdg_goals/${index + 1}.png",
+                                    height: aspectRatio * 120,
+                                    width: aspectRatio * 120,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
                             Expanded(
                               child: SizedBox(
                                 height: aspectRatio * 120,
-                                child: allGoalData.isNotEmpty &&
-                                        allGoalData.length > index &&
-                                        allGoalData[index].projectData !=
-                                            null &&
-                                        allGoalData[index]
-                                            .projectData!
-                                            .isNotEmpty
+                                child: checkForProject(index)
                                     ? ListView.builder(
                                         scrollDirection: Axis.horizontal,
-                                        itemCount: allGoalData[index]
+                                        itemCount: selectedEvent!
+                                            .goalData[index]
                                             .projectData!
                                             .length,
                                         itemBuilder: (context, projectIndex) {
-                                          String projectTitle =
-                                              allGoalData[index]
-                                                  .projectData![projectIndex]
-                                                  .idea;
+                                          String projectTitle = selectedEvent!
+                                              .goalData[index]
+                                              .projectData![projectIndex]
+                                              .idea;
                                           return GestureDetector(
                                             onTap: () => Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     ViewResult(
-                                                  goal: allGoalData[index].name,
-                                                  idea: projectTitle,
+                                                  projectData: selectedEvent!
+                                                          .goalData[index]
+                                                          .projectData![
+                                                      projectIndex],
+                                                  evaluators: selectedEvent!
+                                                      .goalData[index]
+                                                      .evaluators,
                                                 ),
                                               ),
                                             ),
@@ -350,8 +394,13 @@ class HomeState extends ConsumerState<Home> {
                       ],
                     );
                   },
-                );
-              }),
+                )
+              : Center(
+                  child: CustomText(
+                      text: "Select a Event to view the projects!",
+                      size: sizeData.medium,
+                      weight: FontWeight.bold),
+                ),
         ),
       ],
     );

@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-Future<bool> createEvaluator(Map<String, dynamic> data) async {
+Future<bool> createEvaluator(
+    Map<String, dynamic> data, String eventName) async {
   try {
     File profile = data["profile"];
     UploadTask uploadTask = FirebaseStorage.instance
@@ -19,8 +20,10 @@ Future<bool> createEvaluator(Map<String, dynamic> data) async {
         .doc(data["email"])
         .set(data, SetOptions(merge: true));
 
-    await FirebaseFirestore.instance.collection("data").doc(data["goal"]).set({
-      "evaluators": FieldValue.arrayUnion([data["email"]])
+    await FirebaseFirestore.instance.collection("events").doc(eventName).set({
+      data["goal"]: {
+        "evaluators": FieldValue.arrayUnion([data["email"]])
+      }
     }, SetOptions(merge: true));
 
     return true;

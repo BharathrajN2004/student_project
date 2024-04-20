@@ -6,6 +6,8 @@ enum Role { admin, evaluator }
 
 enum LoginSignup { login, signup }
 
+const List<String> searchFields = ["Project Name", "Team Name", "Project ID"];
+
 Map<String, int> validationMap = {
   "Productable": 30,
   "Opportunity": 10,

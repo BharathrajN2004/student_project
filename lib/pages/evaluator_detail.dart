@@ -14,11 +14,16 @@ import '../utilities/theme/size_data.dart';
 
 class EvaluatorDetail extends ConsumerStatefulWidget {
   const EvaluatorDetail(
-      {super.key, required this.from, this.data, required this.goal});
+      {super.key,
+      required this.from,
+      this.data,
+      required this.goal,
+      required this.eventName});
 
   final From from;
   final Map<String, dynamic>? data;
   final String goal;
+  final String eventName;
 
   @override
   ConsumerState<EvaluatorDetail> createState() => _EvaluatorDetailState();
@@ -213,7 +218,7 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                             fontSize: sizeData.medium,
                             color: colorData.fontColor(.6),
                             height: 1,
-                            fontWeight: FontWeight.bold, 
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -282,8 +287,9 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                           "email": emailCtr.text,
                           "phoneNo": phoneNoCtr.text,
                           "specialization": specializationCtr.text,
-                          "goal": widget.goal
-                        });
+                          "goal": widget.goal,
+                          "event": widget.eventName
+                        }, widget.eventName);
                       } else {
                         check = await updateEvaluatorData({
                           "profile": photo.keys.first,

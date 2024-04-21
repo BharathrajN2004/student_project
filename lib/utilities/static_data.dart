@@ -6,6 +6,19 @@ enum Role { admin, evaluator }
 
 enum LoginSignup { login, signup }
 
+const List<String> searchFields = ["Project Name", "Team Name", "Project ID"];
+
+Map<String, int> validationMap = {
+  "Productable": 30,
+  "Opportunity": 10,
+  "Sustainable": 10,
+  "Information": 10,
+  "Technology": 10,
+  "Intellectual": 10,
+  "Viability": 10,
+  "Ethics": 10
+};
+
 const emojis = {
   "0": "🤩",
   "1": "😇",

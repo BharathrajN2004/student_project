@@ -47,7 +47,11 @@ class Profile extends ConsumerWidget {
               SizedBox(
                 height: height * 0.02,
               ),
-              CustomNetworkImage(size: aspectRatio * 250, radius: 500),
+              CustomNetworkImage(
+                size: aspectRatio * 250,
+                radius: 500,
+                url: userData["profile"],
+              ),
               SizedBox(height: height * 0.02),
               CustomText(
                 text: userData["name"],

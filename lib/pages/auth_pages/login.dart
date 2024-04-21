@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:student_project/auth_shifter.dart';
 
 import '../../components/auth/login_textfield.dart';
 import '../../components/auth/loginsignup_shifter.dart';
@@ -43,7 +44,8 @@ class _LoginState extends ConsumerState<Login> {
       role: role,
     )
         .then((value) {
-      Navigator.pop(context);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const AuthShifter()));
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

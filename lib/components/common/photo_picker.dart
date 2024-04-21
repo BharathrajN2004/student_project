@@ -14,12 +14,12 @@ import '../common/text.dart';
 class PhotoPicker extends ConsumerStatefulWidget {
   final From from;
   final Function? setter;
-  final String photoURL;
+  final String? photoURL;
   const PhotoPicker({
     super.key,
     this.setter,
     required this.from,
-    this.photoURL = "",
+    this.photoURL,
   });
 
   @override
@@ -77,7 +77,10 @@ class _PhotoPickerState extends ConsumerState<PhotoPicker> {
                   borderRadius: BorderRadius.circular(8),
                   child: photo == null
                       ? widget.from == From.edit
-                          ? CustomNetworkImage(size: height * .1, radius: 12)
+                          ? CustomNetworkImage(
+                              size: height * .1,
+                              radius: 12,
+                              url: widget.photoURL)
                           : Center(
                               child: CustomText(
                                 text: "PHOTO",

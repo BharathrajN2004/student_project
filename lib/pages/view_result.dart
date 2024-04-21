@@ -1,21 +1,30 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:student_project/components/common/back_button.dart';
-import 'package:student_project/components/common/text.dart';
 
+import '../components/common/back_button.dart';
+import '../components/common/text.dart';
+import '../utilities/static_data.dart';
+import '../model/goaldata.dart';
+import '../providers/data_provider.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
 class ViewResult extends ConsumerStatefulWidget {
-  const ViewResult({super.key});
+  const ViewResult({
+    super.key,
+    required this.projectData,
+    required this.evaluators,
+  });
 
+  final ProjectData projectData;
+  final List<String> evaluators;
+
+  @override
   ConsumerState<ViewResult> createState() => ViewResultState();
 }
 
 class ViewResultState extends ConsumerState<ViewResult> {
-  String? selectedStaff;
+  String? selectedEvaluator;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +33,26 @@ class ViewResultState extends ConsumerState<ViewResult> {
 
     double width = sizeData.width;
     double height = sizeData.height;
+
+    List<String> members = widget.projectData.members;
+    List<String> evaluators = widget.evaluators;
+
+    Map<String, Map<String, dynamic>>? allMarkData = widget.projectData.marks;
+
+    Map<String, dynamic> allMarkValue =
+        validationMap.map((key, value) => MapEntry(key, 0));
+    allMarkData?.entries.forEach((e) {
+      Map<String, dynamic> values = Map<String, dynamic>.from(e.value);
+      values.forEach((key, value) {
+        allMarkValue[key] += value;
+      });
+    });
+
+    Map<String, dynamic>? evaluatorMarkData = selectedEvaluator != null &&
+            allMarkData != null &&
+            allMarkData[selectedEvaluator] != null
+        ? Map<String, dynamic>.from(allMarkData[selectedEvaluator]!)
+        : null;
 
     return Scaffold(
       body: SafeArea(
@@ -49,7 +78,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
                   SizedBox(width: width * 0.02),
                   Expanded(
                     child: CustomText(
-                      text: "Name of the team",
+                      text: widget.projectData.name,
                       size: sizeData.medium,
                       maxLine: 2,
                     ),
@@ -68,7 +97,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
                   SizedBox(width: width * 0.02),
                   Expanded(
                     child: CustomText(
-                      text: "The title of the project",
+                      text: widget.projectData.idea,
                       size: sizeData.medium,
                       maxLine: 2,
                     ),
@@ -90,6 +119,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
                       height: height * 0.04,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
+                        itemCount: members.length,
                         itemBuilder: (context, index) => Container(
                           margin: EdgeInsets.only(right: width * 0.02),
                           padding: EdgeInsets.symmetric(
@@ -99,7 +129,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
                             borderRadius: BorderRadius.circular(8),
                             color: colorData.secondaryColor(.3),
                           ),
-                          child: CustomText(text: "Member $index"),
+                          child: CustomText(text: members[index]),
                         ),
                       ),
                     ),
@@ -110,7 +140,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
               Row(
                 children: [
                   CustomText(
-                    text: "Staff:",
+                    text: "Selected:",
                     weight: FontWeight.w700,
                     color: colorData.fontColor(.6),
                     size: sizeData.medium,
@@ -118,7 +148,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
                   SizedBox(width: width * 0.02),
                   Expanded(
                     child: CustomText(
-                      text: selectedStaff ?? "All",
+                      text: selectedEvaluator ?? "All",
                       size: sizeData.medium,
                       maxLine: 2,
                     ),
@@ -129,7 +159,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
               Row(
                 children: [
                   CustomText(
-                    text: "Staffs:",
+                    text: "Evaluators:",
                     weight: FontWeight.w700,
                     color: colorData.fontColor(.6),
                     size: sizeData.medium,
@@ -140,14 +170,16 @@ class ViewResultState extends ConsumerState<ViewResult> {
                       height: height * 0.04,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
+                          itemCount: evaluators.length,
                           itemBuilder: (context, index) {
-                            bool isSelected = selectedStaff == "staff $index";
+                            bool isSelected =
+                                selectedEvaluator == evaluators[index];
                             return GestureDetector(
                               onTap: () => setState(() {
                                 if (isSelected) {
-                                  selectedStaff = null;
+                                  selectedEvaluator = null;
                                 } else {
-                                  selectedStaff = "staff $index";
+                                  selectedEvaluator = evaluators[index];
                                 }
                               }),
                               child: Container(
@@ -160,7 +192,7 @@ class ViewResultState extends ConsumerState<ViewResult> {
                                   color: colorData
                                       .secondaryColor(isSelected ? .8 : .3),
                                 ),
-                                child: CustomText(text: "Staff $index"),
+                                child: CustomText(text: evaluators[index]),
                               ),
                             );
                           }),
@@ -176,66 +208,146 @@ class ViewResultState extends ConsumerState<ViewResult> {
                 color: colorData.fontColor(.6),
               ),
               SizedBox(height: height * 0.01),
-              Expanded(
-                flex: 8,
-                child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: height * 0.01),
-                        child: Row(
-                          children: [
-                            Expanded(
+              allMarkData != null
+                  ? selectedEvaluator != null
+                      ? evaluatorMarkData != null
+                          ? Expanded(
                               flex: 8,
+                              child: ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: evaluatorMarkData.length,
+                                  itemBuilder: (context, index) {
+                                    String criteria =
+                                        evaluatorMarkData.keys.toList()[index];
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: height * 0.01),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 8,
+                                            child: CustomText(
+                                              text: criteria,
+                                              size: sizeData.medium,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                              height: height * 0.04,
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: width * 0.03,
+                                                  vertical: height * 0.01),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                color: colorData
+                                                    .secondaryColor(.5),
+                                              ),
+                                              child: CustomText(
+                                                text:
+                                                    evaluatorMarkData[criteria]
+                                                        .toString(),
+                                                size: sizeData.medium,
+                                                weight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                            )
+                          : Center(
                               child: CustomText(
-                                text: "Productable",
-                                size: sizeData.medium,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                height: height * 0.04,
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.03,
-                                    vertical: height * 0.01),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: colorData.secondaryColor(.5),
-                                ),
-                                child: CustomText(
-                                  text: "22",
-                                  size: sizeData.medium,
-                                  weight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-              ),
-              SizedBox(height: height * 0.015),
-              Row(
-                children: [
-                  CustomText(
-                    text: "Total Mark:",
-                    weight: FontWeight.w700,
-                    color: colorData.fontColor(.6),
-                    size: sizeData.medium,
-                  ),
-                  SizedBox(width: width * 0.02),
-                  Expanded(
-                    child: CustomText(
-                      text: "220",
-                      size: sizeData.subHeader,
-                      weight: FontWeight.bold,
+                                  align: TextAlign.center,
+                                  maxLine: 3,
+                                  text:
+                                      "$selectedEvaluator have not yet evaluated this team!"),
+                            )
+                      : Expanded(
+                          flex: 8,
+                          child: ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              itemCount: allMarkValue.length,
+                              itemBuilder: (context, index) {
+                                String criteria =
+                                    allMarkValue.keys.toList()[index];
+                                return Container(
+                                  margin:
+                                      EdgeInsets.only(bottom: height * 0.01),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 8,
+                                        child: CustomText(
+                                          text: criteria,
+                                          size: sizeData.medium,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Container(
+                                          height: height * 0.04,
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: width * 0.03,
+                                              vertical: height * 0.01),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: colorData.secondaryColor(.5),
+                                          ),
+                                          child: CustomText(
+                                            text: allMarkValue[criteria]
+                                                .toString(),
+                                            size: sizeData.medium,
+                                            weight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        )
+                  : const Center(
+                      child: CustomText(
+                          text: "Evaluation has not yet begun for this team."),
                     ),
-                  ),
-                ],
-              ),
+              SizedBox(height: height * 0.015),
+              allMarkData != null
+                  ? CustomText(
+                      text:
+                          "Only ${allMarkData.keys.toString()} has evaluated this team.",
+                      size: sizeData.small,
+                      maxLine: 3,
+                    )
+                  : const SizedBox(),
+              SizedBox(height: height * 0.015),
+              allMarkData != null
+                  ? Row(
+                      children: [
+                        CustomText(
+                          text: "Total Mark:",
+                          weight: FontWeight.w700,
+                          color: colorData.fontColor(.6),
+                          size: sizeData.medium,
+                        ),
+                        SizedBox(width: width * 0.02),
+                        Expanded(
+                          child: CustomText(
+                            text: widget.projectData.totalMarks != null
+                                ? widget.projectData.totalMarks.toString()
+                                : "",
+                            size: sizeData.subHeader,
+                            weight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
               const Spacer(),
             ],
           ),
@@ -244,22 +356,3 @@ class ViewResultState extends ConsumerState<ViewResult> {
     );
   }
 }
-
-
-// TextField(
-//                                   keyboardType: TextInputType.number,
-//                                   style: TextStyle(
-//                                     fontSize: sizeData.medium,
-//                                     height: .5,
-//                                   ),
-//                                   decoration: InputDecoration(
-//                                     border: InputBorder.none,
-//                                     hintText: "0 - 30",
-//                                     hintStyle: TextStyle(
-//                                       fontSize: sizeData.regular,
-//                                       color: colorData.fontColor(.6),
-//                                       height: .5,
-//                                       fontWeight: FontWeight.bold,
-//                                     ),
-//                                   ),
-//                                 ),

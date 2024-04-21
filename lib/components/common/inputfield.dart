@@ -6,23 +6,26 @@ import '../../utilities/theme/size_data.dart';
 import '../common/icon.dart';
 
 class CustomInputField extends ConsumerWidget {
-  const CustomInputField({
-    super.key,
-    required this.controller,
-    required this.hintText,
-    required this.icon,
-    required this.inputType,
-    this.readOnly = false,
-    this.bottomMar,
-    this.visibleText = true,
-  });
+  const CustomInputField(
+      {this.onTap,
+      this.suffixIconData,
+      super.key,
+      required this.controller,
+      required this.hintText,
+      required this.icon,
+      required this.inputType,
+      this.readOnly = false,
+      this.bottomMar,
+      this.visibleText});
   final TextEditingController controller;
   final String hintText;
   final IconData icon;
   final TextInputType inputType;
   final bool readOnly;
   final double? bottomMar;
-  final bool visibleText;
+  final bool? visibleText;
+  final VoidCallback? onTap;
+  final IconData? suffixIconData;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,8 +85,18 @@ class CustomInputField extends ConsumerWidget {
               ),
               cursorColor: colorData.primaryColor(1),
               cursorWidth: 2,
-              obscureText: !visibleText,
+              obscureText: visibleText ?? false,
               decoration: InputDecoration(
+                suffixIcon: suffixIconData != null
+                    ? GestureDetector(
+                        onTap: onTap,
+                        child: CustomIcon(
+                          icon: suffixIconData!,
+                          color: colorData.fontColor(.8),
+                          size: aspectRatio * 55,
+                        ),
+                      )
+                    : const SizedBox(),
                 hintText: hintText,
                 hintStyle: TextStyle(
                   fontWeight: FontWeight.w600,

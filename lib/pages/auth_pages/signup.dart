@@ -28,6 +28,8 @@ class _SignupState extends ConsumerState<Signup> {
 
   Map<String, dynamic> generatedData = {};
 
+  bool showPassword = false;
+
   @override
   void dispose() {
     emailCtr.dispose();
@@ -185,10 +187,18 @@ class _SignupState extends ConsumerState<Signup> {
                   CustomInputField(
                     controller: passwordCtr,
                     hintText: "PASSWORD",
+                    onTap: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                    suffixIconData: showPassword == true
+                        ? Icons.remove_red_eye
+                        : Icons.visibility_off,
                     icon: Icons.password_rounded,
                     inputType: TextInputType.visiblePassword,
                     readOnly: generatedData.isEmpty,
-                    visibleText: false,
+                    visibleText: showPassword,
                   ),
                   GestureDetector(
                     onTap:

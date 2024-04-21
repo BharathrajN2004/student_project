@@ -24,7 +24,7 @@ class Login extends ConsumerStatefulWidget {
 class _LoginState extends ConsumerState<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
+  bool showPassword = true;
   @override
   void dispose() {
     emailController.dispose();
@@ -131,11 +131,19 @@ class _LoginState extends ConsumerState<Login> {
                     bottomMargin: 0.025,
                   ),
                   LoginTextField(
+                    onTap: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                    suffixIconData: showPassword == true
+                        ? Icons.remove_red_eye
+                        : Icons.visibility_off,
                     icon: Icons.password_rounded,
                     labelText: "PASSWORD",
                     controller: passwordController,
                     bottomMargin: 0.01,
-                    isVisible: false,
+                    isVisible: showPassword,
                   ),
                   Align(
                     alignment: Alignment.centerRight,

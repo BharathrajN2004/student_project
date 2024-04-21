@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -275,48 +277,137 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                 alignment: Alignment.center,
                 child: GestureDetector(
                   onTap: () async {
-                    if (nameCtr.text.isNotEmpty &&
-                        emailCtr.text.isNotEmpty &&
-                        phoneNoCtr.text.isNotEmpty &&
-                        specializationCtr.text.isNotEmpty) {
-                      bool check;
-                      if (widget.from == From.add) {
-                        check = await createEvaluator({
-                          "profile": photo.keys.first,
-                          "name": nameCtr.text,
-                          "email": emailCtr.text,
-                          "phoneNo": phoneNoCtr.text,
-                          "specialization": specializationCtr.text,
-                          "goal": widget.goal,
-                          "event": widget.eventName
-                        }, widget.eventName);
-                      } else {
-                        check = await updateEvaluatorData({
-                          "profile": photo.keys.first,
-                          "name": nameCtr.text,
-                          "email": emailCtr.text,
-                          "phoneNo": phoneNoCtr.text,
-                          "specialization": specializationCtr.text,
-                        });
-                      }
-                      if (check) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Center(
-                                child: Text(
-                                    "Evaluator details saved successfully")),
-                          ),
-                        );
+                    if (widget.from == From.add) {
+                      if (nameCtr.text.isNotEmpty &&
+                          emailCtr.text.isNotEmpty &&
+                          phoneNoCtr.text.isNotEmpty &&
+                          specializationCtr.text.isNotEmpty) {
+                        await createEvaluator(
+                          {
+                            "profile": photo.keys.first,
+                            "name": nameCtr.text,
+                            "email": emailCtr.text,
+                            "phoneNo": phoneNoCtr.text,
+                            "specialization": specializationCtr.text,
+                            "goal": widget.goal,
+                            "event": widget.eventName
+                          },
+                          widget.eventName,
+                        ).then((value) =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Center(
+                                  child: Text(
+                                      "Evaluator details saved successfully"),
+                                ),
+                              ),
+                            ));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Center(
-                                child: Text("Kindly enter all the data")),
+                              child: Text("Kindly enter all the data"),
+                            ),
                           ),
                         );
                       }
+                    } else {
+                      print(widget.data!['name']);
+                      print(nameCtr.text.isEmpty);
+                      print(nameCtr.text);
+                      await updateEvaluatorData(
+                        {
+                          "profile": photo.keys.isEmpty
+                              ? widget.data!['profile']
+                              : photo.keys.first,
+                          "name": nameCtr.text.isEmpty
+                              ? widget.data!['name']
+                              : nameCtr.text,
+                          "email": widget.data!['email'],
+                          "phoneNo": phoneNoCtr.text.isEmpty
+                              ? widget.data!['phoneNo']
+                              : phoneNoCtr.text,
+                          "specialization": specializationCtr.text.isEmpty
+                              ? widget.data!['specialization']
+                              : specializationCtr.text,
+                        },
+                        photo.keys.isEmpty ? "firebasepath" : "filepath",
+                      ).then(
+                        (value) => ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Center(
+                              child: Text(
+                                  "Evaluator details updated successfully"),
+                            ),
+                          ),
+                        ),
+                      );
+                      Navigator.pop(context);
                     }
+
+                    // if (nameCtr.text.isNotEmpty &&
+                    //     emailCtr.text.isNotEmpty &&
+                    //     phoneNoCtr.text.isNotEmpty &&
+                    //     specializationCtr.text.isNotEmpty) {
+                    //   bool check;
+                    //   if (widget.from == From.add) {
+                    //     check = await createEvaluator(
+                    //       {
+                    //         "profile": photo.keys.first,
+                    //         "name": nameCtr.text,
+                    //         "email": emailCtr.text,
+                    //         "phoneNo": phoneNoCtr.text,
+                    //         "specialization": specializationCtr.text,
+                    //         "goal": widget.goal,
+                    //         "event": widget.eventName
+                    //       },
+                    //       widget.eventName,
+                    //     );
+                    //   } else {
+                    //     print('Updation');
+                    //     check = await updateEvaluatorData(
+                    //       {
+                    //         "profile": photo.keys.isEmpty
+                    //             ? widget.data!['profile']
+                    //             : photo.keys.first,
+                    //         "name": nameCtr.text.isEmpty
+                    //             ? widget.data!['name']
+                    //             : nameCtr.text,
+                    //         "email": widget.data!['email'],
+                    //         "phoneNo": phoneNoCtr.text.isEmpty
+                    //             ? widget.data!['phoneNo']
+                    //             : phoneNoCtr.text,
+                    //         "specialization": specializationCtr.text.isEmpty
+                    //             ? widget.data!['specialization']
+                    //             : specializationCtr.text,
+                    //       },
+                    //     );
+                    //   }
+                    //   if (check) {
+                    //     Navigator.pop(context);
+                    //     ScaffoldMessenger.of(context).showSnackBar(
+                    //       const SnackBar(
+                    //         content: Center(
+                    //             child: Text(
+                    //                 "Evaluator details saved successfully")),
+                    //       ),
+                    //     );
+                    //   } else {
+                    //     ScaffoldMessenger.of(context).showSnackBar(
+                    //       const SnackBar(
+                    //         content: Center(
+                    //             child: Text("Kindly enter all the data")),
+                    //       ),
+                    //     );
+                    //   }
+                    // } else {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(
+                    //       content:
+                    //           Center(child: Text("Kindly enter all the data")),
+                    //     ),
+                    //   );
+                    // }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -328,7 +419,7 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                           color: colorData.secondaryColor(.8), width: 2),
                     ),
                     child: CustomText(
-                      text: "SAVE",
+                      text: widget.from == From.add ? "SAVE" : "UPDATE",
                       size: sizeData.medium,
                       weight: FontWeight.bold,
                     ),

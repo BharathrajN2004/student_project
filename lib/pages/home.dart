@@ -1,9 +1,12 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:student_project/components/auth/login_textfield.dart';
+import 'package:student_project/functions/create/create_userData.dart';
 import 'package:student_project/pages/goal_search.dart';
 import 'package:student_project/providers/data_provider.dart';
 import 'package:student_project/providers/user_detail_provider.dart';
@@ -31,10 +34,13 @@ class HomeState extends ConsumerState<Home> {
   EventData? selectedEvent;
 
   List<EventData> searchedEvents = [];
+  bool showContainer = false;
+  TextEditingController eventController = TextEditingController();
 
   @override
   void dispose() {
     eventCtr.dispose();
+    eventController.dispose();
     super.dispose();
   }
 
@@ -210,6 +216,111 @@ class HomeState extends ConsumerState<Home> {
           ),
         ),
         SizedBox(height: height * 0.02),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Row(
+            children: [
+              CustomText(
+                text: "Create Event",
+                size: sizeData.header,
+                weight: FontWeight.w700,
+                color: colorData.fontColor(.8),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    showContainer = !showContainer;
+                  });
+                },
+                child: Container(
+                  width: width * 0.08,
+                  height: height * 0.035,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: colorData.primaryColor(.3),
+                  ),
+                  child: CustomIcon(
+                    size: aspectRatio * 50,
+                    icon: showContainer ? Icons.remove : Icons.add,
+                    color: colorData.fontColor(.5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: height * 0.02),
+        showContainer
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    height: height * 0.04,
+                    width: width * 0.6,
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: height * 0.045,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: colorData.secondaryColor(.3),
+                        border: Border.all(
+                          color: colorData.secondaryColor(.8),
+                        ),
+                      ),
+                      child: TextField(
+                        controller: eventController,
+                        scrollPadding: EdgeInsets.zero,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(
+                            left: width * 0.02,
+                            right: width * 0.02,
+                            bottom: width * 0.02,
+                          ),
+                          border: InputBorder.none,
+                          hintText: "Type the Event name",
+                          hintStyle: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: colorData.fontColor(.3),
+                            fontSize: sizeData.regular,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      createEvent(eventname: eventController.text.trim());
+                      eventController.clear();
+                    },
+                    child: Container(
+                      height: height * 0.04,
+                      width: width * 0.2,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: colorData.primaryColor(.3),
+                      ),
+                      child: Row(
+                        children: [
+                          CustomIcon(
+                            size: aspectRatio * 50,
+                            icon: Icons.upload,
+                            color: colorData.fontColor(.5),
+                          ),
+                          const CustomText(
+                            text: "Update",
+                            size: 14,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox(),
+        showContainer ? SizedBox(height: height * 0.02) : const SizedBox(),
         searchedEvents.isEmpty && eventCtr.text.isNotEmpty
             ? Center(
                 child: CustomText(

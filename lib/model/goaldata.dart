@@ -2,7 +2,10 @@ class EventData {
   String name;
   List<GoalData> goalData;
 
-  EventData({required this.name, required this.goalData});
+  EventData({
+    required this.name,
+    required this.goalData,
+  });
 }
 
 class GoalData {

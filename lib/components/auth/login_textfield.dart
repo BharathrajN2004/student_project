@@ -11,17 +11,20 @@ class LoginTextField extends ConsumerWidget {
   final TextEditingController controller;
   final double bottomMargin;
   final bool isReadOnly;
-  final bool isVisible;
+  final bool? isVisible;
+  final VoidCallback? onTap;
 
-  const LoginTextField({
-    super.key,
-    required this.labelText,
-    required this.icon,
-    required this.controller,
-    required this.bottomMargin,
-    this.isReadOnly = false,
-    this.isVisible = true,
-  });
+  final IconData? suffixIconData;
+  const LoginTextField(
+      {super.key,
+      required this.labelText,
+      this.onTap,
+      this.suffixIconData,
+      required this.icon,
+      required this.controller,
+      required this.bottomMargin,
+      this.isReadOnly = false,
+      this.isVisible});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +43,7 @@ class LoginTextField extends ConsumerWidget {
       child: TextField(
         readOnly: isReadOnly,
         controller: controller,
-        obscureText: !isVisible,
+        obscureText: isVisible ?? false,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: sizeData.medium,
@@ -49,6 +52,16 @@ class LoginTextField extends ConsumerWidget {
         decoration: InputDecoration(
           contentPadding: EdgeInsets.zero,
           border: InputBorder.none,
+          suffixIcon: suffixIconData != null
+              ? GestureDetector(
+                  onTap: onTap,
+                  child: CustomIcon(
+                    icon: suffixIconData!,
+                    color: colorData.fontColor(.8),
+                    size: aspectRatio * 55,
+                  ),
+                )
+              : const SizedBox(),
           prefixIcon: CustomIcon(
             icon: icon,
             color: colorData.fontColor(.8),

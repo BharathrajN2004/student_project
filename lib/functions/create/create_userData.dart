@@ -53,3 +53,14 @@ Future createUser({
     );
   });
 }
+
+Future createEvent({required String eventname}) async {
+  try {
+    FirebaseFirestore.instance
+        .collection("events")
+        .doc(eventname[0].toUpperCase() + eventname.substring(1).toLowerCase())
+        .set({}, SetOptions(merge: true));
+  } catch (e) {
+    
+  }
+}

@@ -302,6 +302,7 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                                 ),
                               ),
                             ));
+                        Navigator.pop(context);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

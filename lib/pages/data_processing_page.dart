@@ -1,8 +1,10 @@
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, unnecessary_null_comparison
+
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore: library_prefixes
 import 'package:excel/excel.dart' as Excel;
 import 'package:csv/csv.dart';
-import 'package:flutter/widgets.dart';
 import 'package:open_file/open_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,7 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_project/components/common/datatable.dart';
-
+import 'package:open_file/open_file.dart' as open_file;
 import '../components/common/icon.dart';
 import '../components/common/text.dart';
 import '../model/goaldata.dart';
@@ -18,6 +20,7 @@ import '../providers/data_provider.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
+// Hi bharath
 class DataProcessingPage extends ConsumerStatefulWidget {
   const DataProcessingPage({super.key});
   @override
@@ -63,7 +66,7 @@ class DataProcessingPageState extends ConsumerState<DataProcessingPage> {
 
   List<List<dynamic>> excelValues = [];
 
-  Future<String> generateExcelFile({List<List>? bodyData}) async {
+  Future<String> sampleExcelFile({List<List>? bodyData}) async {
     List<List> body = [];
     List<String> header = [
       'SDG',
@@ -97,6 +100,100 @@ class DataProcessingPageState extends ConsumerState<DataProcessingPage> {
     final File file = File(path);
     await file.writeAsString(csv);
     return file.path;
+  }
+
+  Future<void> generateExcelFile({List<List>? bodyData}) async {
+    var excel = Excel.Excel.createExcel();
+
+    for (var i = 0; i < bodyData!.length; i++) {
+      var sheet = excel["sheet${i + 1}"];
+      sheet.appendRow([
+        const Excel.TextCellValue('SDG'),
+        const Excel.TextCellValue('Title'),
+        const Excel.TextCellValue('Prob Id'),
+        const Excel.TextCellValue('Team Name'),
+        const Excel.TextCellValue('Team Leader'),
+        const Excel.TextCellValue('Productable (30)'),
+        const Excel.TextCellValue('Opportunity (10)'),
+        const Excel.TextCellValue('Sustainable (10)'),
+        const Excel.TextCellValue('Information (10)'),
+        const Excel.TextCellValue('Technology (10)'),
+        const Excel.TextCellValue('Intellectual (10)'),
+        const Excel.TextCellValue('Viability (10)'),
+        const Excel.TextCellValue('Ethics (10)'),
+        const Excel.TextCellValue('Total (100)')
+      ]);
+      var rowData = bodyData[i];
+      // field 1 team name
+      // field 4 leader name
+      // field 7 total Mark
+      Map<String, int> totalMarksList = {};
+      for (var j = 0; j < rowData.length; j++) {
+        var p = rowData[j];
+        totalMarksList.addAll({
+          p[1].toString():
+              int.parse(p[7] != null ? p[7].toString() : 0.toString())
+        });
+        sheet.appendRow([
+          Excel.TextCellValue(p[0].toString()),
+          Excel.TextCellValue(p[1].toString()),
+          Excel.TextCellValue(p[2].toString()),
+          Excel.TextCellValue(p[3].toString()),
+          Excel.TextCellValue(p[5].split(',')[2].toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Productable'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Opportunity'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Sustainable'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Information'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Technology'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Intellectual'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Viability'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[6] != null
+              ? p[6].values.first['Ethics'].toString()
+              : 0.toString()),
+          Excel.TextCellValue(p[7] != null ? p[7].toString() : 0.toString())
+        ]);
+      }
+      // print(totalMarksList);
+      var sortedEntries = totalMarksList.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+
+      var topEntries = Map.fromEntries(sortedEntries.take(4));
+      for (var i = 0; i < 6; i++) {
+        sheet.appendRow([const Excel.TextCellValue("")]);
+      }
+      List<String> places = ["Winner", "Runner 1", "Runner 2", "Runner 3"];
+      int a = 1;
+      for (var entry in topEntries.entries) {
+        sheet.appendRow([
+          Excel.TextCellValue(places[a - 1].toString()),
+          Excel.TextCellValue(entry.key.toString()),
+          Excel.TextCellValue(entry.value.toString())
+        ]);
+        a += 1;
+      }
+    }
+
+    String fileName = bodyData != null ? selectedEvent!.name : "sample_import";
+
+    final directoryPath = await getExternalStorageDirectory();
+    final path = "${directoryPath!.path}/$fileName.xlsx";
+    final File file = File(path);
+    await file.writeAsBytes(excel.encode()!);
+    await open_file.OpenFile.open(file.path);
   }
 
   void readExcelFile(File file) async {
@@ -148,7 +245,7 @@ class DataProcessingPageState extends ConsumerState<DataProcessingPage> {
         };
 
         await FirebaseFirestore.instance
-            .collection("data")
+            .collection("events")
             .doc(selectedEvent!.name)
             .set({
           "goal ${i[SDGindex]}": {"projects": dataToUpload}
@@ -371,7 +468,7 @@ class DataProcessingPageState extends ConsumerState<DataProcessingPage> {
                 SizedBox(height: height * 0.01),
                 GestureDetector(
                   onTap: () async {
-                    String filePath = await generateExcelFile();
+                    String filePath = await sampleExcelFile();
                     OpenFile.open(filePath);
                   },
                   child: Align(
@@ -456,13 +553,14 @@ class DataProcessingPageState extends ConsumerState<DataProcessingPage> {
                                   projectData.name,
                                   projectData.teamLead,
                                   projectData.members.join(","),
+                                  projectData.marks,
+                                  projectData.totalMarks
                                 ];
                               }).toList();
                             } else {
                               return [];
                             }
                           }).toList();
-
                           generateExcelFile(bodyData: excelData);
                         } else {
                           ScaffoldMessenger.of(context)

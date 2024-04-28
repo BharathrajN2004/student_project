@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_project/model/goaldata.dart';
 import 'package:student_project/pages/evaluator_detail.dart';
@@ -16,6 +15,7 @@ import '../utilities/theme/size_data.dart';
 class Evaluators extends ConsumerStatefulWidget {
   const Evaluators({super.key});
 
+  @override
   ConsumerState<Evaluators> createState() => EvaluatorState();
 }
 
@@ -81,7 +81,6 @@ class EvaluatorState extends ConsumerState<Evaluators> {
 
     selectedEvent?.goalData.sort((a, b) => int.parse(a.name.split(" ")[1])
         .compareTo(int.parse(b.name.split(" ")[1])));
-
 
     return Column(
       children: [

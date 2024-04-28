@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_project/model/goaldata.dart';
 import 'package:student_project/providers/user_detail_provider.dart';
@@ -182,7 +181,11 @@ class _EvaluationPageState extends ConsumerState<EvaluationPage> {
                                       int mark = int.parse(value);
                                       if (mark >= 0 &&
                                           mark <= validationMap[criteria]!) {
-                                        evaluationData[criteria] = mark;
+                                        if (evaluatorMarkData != null) {
+                                          evaluatorMarkData[criteria] = mark;
+                                        } else {
+                                          evaluationData[criteria] = mark;
+                                        }
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
@@ -248,6 +251,25 @@ class _EvaluationPageState extends ConsumerState<EvaluationPage> {
                 child: GestureDetector(
                   onTap: () {
                     try {
+                      // if (evaluatorMarkData != null) {
+                      //   int initialTotal =
+                      //       evaluatorMarkData.values.reduce((a, b) => a + b);
+                      //   print(evaluatorMarkData);
+                      //   print(initialTotal);
+                      //   FirebaseFirestore.instance
+                      //       .collection("events")
+                      //       .doc(userData["event"])
+                      //       .set({
+                      //     widget.goal: {
+                      //       "projects": {
+                      //         widget.projectData.idea: {
+                      //           "marks": {userData["email"]: evaluatorMarkData},
+                      //           "total": initialTotal,
+                      //         }
+                      //       }
+                      //     },
+                      //   }, SetOptions(merge: true));
+                      // } else {
                       FirebaseFirestore.instance
                           .collection("events")
                           .doc(userData["event"])
@@ -265,6 +287,8 @@ class _EvaluationPageState extends ConsumerState<EvaluationPage> {
                           }
                         },
                       }, SetOptions(merge: true));
+                      // }
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Center(

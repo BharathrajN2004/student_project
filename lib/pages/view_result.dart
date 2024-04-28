@@ -5,7 +5,6 @@ import '../components/common/back_button.dart';
 import '../components/common/text.dart';
 import '../utilities/static_data.dart';
 import '../model/goaldata.dart';
-import '../providers/data_provider.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 

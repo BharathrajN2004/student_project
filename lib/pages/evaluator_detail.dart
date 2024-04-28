@@ -313,9 +313,6 @@ class _EvaluatorDetailState extends ConsumerState<EvaluatorDetail> {
                         );
                       }
                     } else {
-                      print(widget.data!['name']);
-                      print(nameCtr.text.isEmpty);
-                      print(nameCtr.text);
                       await updateEvaluatorData(
                         {
                           "profile": photo.keys.isEmpty

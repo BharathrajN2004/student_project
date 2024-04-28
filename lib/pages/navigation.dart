@@ -42,7 +42,6 @@ class _NavigationState extends ConsumerState<Navigation> {
       });
     } catch (error) {
       ref.read(dataProvider.notifier).fetchGoalData([]);
-      print(error);
     }
   }
 

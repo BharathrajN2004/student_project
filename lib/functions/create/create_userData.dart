@@ -1,3 +1,6 @@
+
+// ignore_for_file: avoid_print, file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,6 +64,6 @@ Future createEvent({required String eventname}) async {
         .doc(eventname[0].toUpperCase() + eventname.substring(1).toLowerCase())
         .set({}, SetOptions(merge: true));
   } catch (e) {
-    
+    print(e);
   }
 }

@@ -24,7 +24,6 @@ Future<bool> updateEvaluatorData(
 
     return true;
   } catch (error) {
-    print(error);
     return false;
   }
 }
